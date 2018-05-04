@@ -1,0 +1,172 @@
+var draw_view3 = {
+    data: 0,
+    height: 0,
+    width: 0,
+    div: 0,
+    view: 0,
+    graph_line: 0,
+    yScale: 0,
+    xScale: 0,
+    initialize: function(min, max) {
+        var self = this;
+        self.div = "#view3";
+        self.width = $(self.div).width();
+        self.height = $(self.div).height();
+        self.view = d3v3.select(self.div).append("svg")
+            .attr("width", self.width)
+            .attr("height", self.height);
+        console.log(self.width)
+    },
+    get_view3_data: function(chosen_id, list) {
+        console.log(list)
+        var self = this;
+        var ids = [];
+        for (var i = 0; i < list.length - 1; i++)
+            ids += list[i] + ',';
+        ids = ids + list[list.length - 1];
+        var url = 'http://localhost:8080/getGroupOverview?ids=' + ids + '&date1=2017-11-01 00:00:00&date2=2017-11-05 00:00:00';
+        $.ajax(url, {
+            data: {},
+            dataType: 'json',
+            crossDomain: true,
+            success: function(data) {
+                console.log(data)
+                for (var i = 0; i < list.length; i++) {
+                    data[i].avgFlowup = parseFloat((parseInt(data[i].avgFlowup) / (Math.pow(1024, 2))).toFixed(2));
+                    data[i].avgFlowDown = parseFloat((parseInt(data[i].avgFlowDown) / (Math.pow(1024, 2))).toFixed(2));
+
+                    if ((data[i].avgCheckin == 'null')) data[i].avgCheckin = 0;
+                    else
+                        data[i].avgCheckin = parseInt(data[i].avgCheckin.slice(0, 2)) + parseInt(data[i].avgCheckin.slice(3, 5)) / 60;
+                    if ((data[i].avgCheckout == 'null')) data[i].avgCheckout = 0;
+                    else
+                        data[i].avgCheckout = parseInt(data[i].avgCheckout.slice(0, 2)) + parseInt(data[i].avgCheckout.slice(3, 5)) / 60;
+                }
+                self.draw(chosen_id, data);
+            },
+            error: function(data) {
+                console.error("error")
+            }
+        })
+    },
+    draw: function(chosen_id, data) {
+        var self = this;
+        self.remove();
+        var property = $('input:radio:checked').val();
+        console.log(property)
+
+        var h_min = d3.min(data, function(d) {
+            return d.avgCheckin;
+        })
+        var h_max = d3.max(data, function(d) {
+            return d.avgCheckout;
+        })
+        var z_min = d3.min(data, function(d) {
+            if (property == "avgFlowDown")
+                return d.avgFlowDown;
+            else if (property == "avgFlowup")
+                return d.avgFlowup;
+            return d.avgLog;
+        })
+        var z_max = d3.max(data, function(d) {
+            if (property == "avgFlowDown")
+                return d.avgFlowDown;
+            else if (property == "avgFlowup")
+                return d.avgFlowup;
+            return d.avgLog;
+        })
+        console.log("------------" + z_min + " " + z_max);
+        self.yScale = d3v3.scale.linear()
+            .domain([z_min - (z_max - z_min) * 0.1, z_max])
+            .range([0, self.height * 0.8]);
+        var yAxis = d3v3.svg.axis()
+            .scale(self.yScale)
+            .ticks(8)
+            .orient("left");
+        self.yScale.range([self.height * 0.8, 0]);
+
+        self.xScale = d3v3.scale.linear()
+            .domain([h_min, h_max])
+            .range([0, self.width * 0.9]);
+        var xAxis = d3v3.svg.axis()
+            .scale(self.xScale)
+        var gxAxis = self.view.append("g")
+            .attr("id", "view3_gx")
+            .attr("transform", 'translate(' + (self.width * 0.1) + ',' + (self.height * 0.9) + ')')
+            .attr("class", "axis");
+
+        var gyAxis = self.view.append("g")
+            .attr("id", "view3_gy")
+            .attr("transform", 'translate(' + (self.width * 0.1) + ',' + (self.height * 0.1) + ')')
+            .attr("class", "axis");
+        gxAxis.call(xAxis);
+        gyAxis.call(yAxis);
+        var tmp_value = 0;
+        self.yScale.range([0, self.height * 0.8]);
+
+        self.graph_line = self.view.append("g")
+            .attr("id", "view3_line")
+            .selectAll("line")
+            .data(data)
+            .enter().append("line")
+            .attr("x1", function(d) {
+                return self.xScale(d.avgCheckin) + (self.width * 0.1);
+            })
+            .attr("x2", function(d) {
+                return self.xScale(d.avgCheckout) + (self.width * 0.1);
+            })
+            .attr("y1", function(d) {
+                if (property == "avgFlowDown")
+                    tmp_value = (d.avgFlowDown);
+                else if (property == "avgFlowup")
+                    tmp_value = (d.avgFlowup);
+                else tmp_value = (d.avgLog);
+
+                return self.height * 0.9 - self.yScale(tmp_value);
+            })
+            .attr("y2", function(d) {
+                if (property == "avgFlowDown")
+                    tmp_value = (d.avgFlowDown);
+                else if (property == "avgFlowup")
+                    tmp_value = (d.avgFlowup);
+                else tmp_value = (d.avgLog);
+                return self.height * 0.9 - self.yScale(tmp_value);
+            })
+            .attr("stroke", function(d) {
+                if (d.staffId == chosen_id) return "red";
+                return "steelblue";
+            })
+            .attr("stroke-width", function(d) {
+                if (d.staffId == chosen_id) return 2;
+                return 1;
+            })
+            .on("mouseover", function(d) {
+                if (property == "avgFlowDown")
+                    tmp_value = (d.avgFlowDown);
+                else if (property == "avgFlowup")
+                    tmp_value = (d.avgFlowup);
+                else tmp_value = (d.avgLog);
+                d3.select(this).raise().classed("active", true);
+
+                tooptip.html(d.staffId + " " + property + " Value: " + tmp_value + "(MB)")
+                    .style("left", (d3v3.event.pageX) + "px")
+                    .style("top", (d3v3.event.pageY + 20) + "px")
+                    .style("opacity", 1);
+            })
+            .on("mouseout", function(d) {
+                d3.select(this).classed("active", false);
+                tooptip.style("opacity", 0.0);
+            })
+
+        $("input[type='radio']").change(function() {
+            draw_view3.draw(chosen_id, data);
+        });
+    },
+    remove: function() {
+        var self = this;
+        self.view.selectAll("*").remove();
+    },
+    myIsNaN: function(value) {
+        return value !== value;
+    }
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>ChinaVis</title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="stylesheets/main.css">
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/underscore-min.js"></script>
+    <script src="lib/d3.min.js"></script>
+    <script src="lib/bootstrap.min.js"></script>
+    <script src="lib/d3.v3.min.js"></script>
+    <script src="lib/numeric-1.2.6.min.js"></script>
+</head>
+
+<body>
+    <div id="top_div">
+        <div id="top_left_div" class="outer-div">
+            <div id="view1" class="block-div">
+            </div>
+        </div>
+        <div id="top_middle_div">
+            <div id="top_middle_top_div" class="outer-div">
+                <div id="view2" class="block-div">
+                </div>
+            </div>
+            <div id="top_middle_bottom_div" class="outer-div">
+                <div id="view3_select" class="block-div">
+                    <center>
+                        <input type="radio" name="aaa" value="avgFlowDown" checked="checked">avgFlowDown(MB)
+                        <input type="radio" name="aaa" value="avgFlowup">avgFlowup(MB)
+                        <input type="radio" name="aaa" value="avgLog">avgLog(times)
+                    </center>
+                </div>
+                <div id="view3" class="block-div">
+                </div>
+            </div>
+            <div id="sub_top_middle_bottom_div" class="outer-div">
+                <div id="sub_view3" class="block-div">
+
+                </div>
+            </div>
+        </div>
+        <div id="top_right_div" class="outer-div">
+            <div id="view4" class="block-div">
+            </div>
+        </div>
+    </div>
+    <div id="bottom_div">
+        <div id="bottom_left_div" class="outer-div">
+            <div id="view5" class="block-div">
+            </div>
+        </div>
+        <div id="bottom_right_div" class="outer-div">
+            <div id="view6" class="block-div">
+            </div>
+        </div>
+    </div>
+    <script src="javascripts/draw_view1.js"></script>
+    <script src="javascripts/draw_view2.js"></script>
+    <script src="javascripts/draw_view3.js"></script>
+    <script src="javascripts/draw_sub_view3.js"></script>
+    <script src="javascripts/create_data.js"></script>
+    <script src="javascripts/new_k_means_cluster.js"></script>
+    <script src="javascripts/spectral_cluster.js"></script>
+    <script src="javascripts/initial.js"></script>
+</body>
+
+</html>
