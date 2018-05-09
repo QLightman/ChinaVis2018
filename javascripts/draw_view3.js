@@ -136,6 +136,7 @@ var draw_view3 = {
                 if (d.staffId == chosen_id) return "red";
                 return "steelblue";
             })
+            .attr("opacity", 0.5)
             .attr("stroke-width", function(d) {
                 if (d.staffId == chosen_id) return 2;
                 return 1;
@@ -161,6 +162,35 @@ var draw_view3 = {
         $("input[type='radio']").change(function() {
             draw_view3.draw(chosen_id, data);
         });
+        $("#range_slider").change(function() {
+            var value = $(this).val();
+            self.graph_line
+                .attr("opacity", function(d) {
+                    if (property == "avgFlowDown")
+                        tmp_value = (d.avgFlowDown);
+                    else if (property == "avgFlowup")
+                        tmp_value = (d.avgFlowup);
+                    else tmp_value = (d.avgLog);
+                    if ((tmp_value - z_min) >= ((z_max - z_min) * value * 0.01)) return 1;
+                    return 0.2;
+                })
+        })
+        d3.select("#range_slider").on("mouseover", function(d) {
+                tooptip.html($(this).val() + "%")
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY + 20) + "px")
+                    .style("opacity", 1);
+            })
+            .on('mousemove', function(d) {
+                tooptip.html($(this).val() + "%")
+                tooptip.style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY + 20) + "px")
+            })
+            .on("mouseout", function(d) {
+                tooptip.style("opacity", 0.0);
+            })
+
+
     },
     remove: function() {
         var self = this;

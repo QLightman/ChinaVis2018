@@ -5,6 +5,7 @@
     <title>ChinaVis</title>
     <link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.min.css">
     <link rel="stylesheet" href="stylesheets/main.css">
+
     <script src="lib/jquery.min.js"></script>
     <script src="lib/underscore-min.js"></script>
     <script src="lib/d3.min.js"></script>
@@ -25,6 +26,10 @@
                 </div>
             </div>
             <div id="top_middle_bottom_div" class="outer-div">
+                <div id="view3_range" class="block_div">
+                    <input id="range_slider" type="range" min="0" max="100" step="2">
+                </div>
+
                 <div id="view3_select" class="block-div">
                     <center>
                         <input type="radio" name="aaa" value="avgFlowDown" checked="checked">avgFlowDown(MB)
@@ -60,9 +65,6 @@
     <script src="javascripts/draw_view2.js"></script>
     <script src="javascripts/draw_view3.js"></script>
     <script src="javascripts/draw_sub_view3.js"></script>
-    <script src="javascripts/create_data.js"></script>
-    <script src="javascripts/new_k_means_cluster.js"></script>
-    <script src="javascripts/spectral_cluster.js"></script>
     <script src="javascripts/initial.js"></script>
 </body>
 

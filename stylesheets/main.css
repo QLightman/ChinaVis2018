@@ -74,6 +74,11 @@
     border-radius: 1px;
 }
 
+#view3_range {
+    width: 100%;
+    height: 12%;
+}
+
 #view3_select {
     width: 100%;
     height: 8%;
@@ -81,7 +86,7 @@
 
 #view3 {
     width: 100%;
-    height: 92%;
+    height: 80%;
 }
 
 .texts {
