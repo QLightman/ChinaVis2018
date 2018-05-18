@@ -177,13 +177,13 @@ var draw_view3 = {
         })
         d3.select("#range_slider").on("mouseover", function(d) {
                 tooptip.html($(this).val() + "%")
-                    .style("left", (d3.event.pageX) + "px")
+                    .style("left", (d3.event.pageX - 10) + "px")
                     .style("top", (d3.event.pageY + 20) + "px")
                     .style("opacity", 1);
             })
             .on('mousemove', function(d) {
                 tooptip.html($(this).val() + "%")
-                tooptip.style("left", (d3.event.pageX) + "px")
+                tooptip.style("left", (d3.event.pageX - 10) + "px")
                     .style("top", (d3.event.pageY + 20) + "px")
             })
             .on("mouseout", function(d) {

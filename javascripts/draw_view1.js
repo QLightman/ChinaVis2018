@@ -100,6 +100,14 @@ var draw_view1 = {
                         if (_.contains(self.group_array[j], node_class[i].id)) { node_class[i].property = self.property_class[j]; break; }
                     }
                 }
+                //add the boss node
+                var tmp = new NODE();
+                tmp.id = "1067";
+                tmp.size = 10;
+                tmp.property = "boss";
+                node_class.push(tmp);
+
+
                 var line_index = 0;
                 for (var i = 0; i < data.length; i++) {
                     for (var j = 0; j < data[i].to.length; j++) {
@@ -110,6 +118,15 @@ var draw_view1 = {
                         line_class[line_index].property = _.indexOf(self.property_class, data[i].subject);
                         line_index++;
                     }
+                }
+                var boss_connect_node = ["1041", "1068", "1013", "1059", "1007"];
+                for (var i = 0; i < boss_connect_node.length; i++) {
+                    line_class[line_index] = new LINE();
+                    line_class[line_index].source = "1067";
+                    line_class[line_index].target = boss_connect_node[i];
+                    line_class[line_index].value = 10;
+                    line_class[line_index].property = 4;
+                    line_index++;
                 }
                 console.log(node_class)
                 console.log(line_class)
@@ -168,7 +185,9 @@ var draw_view1 = {
                 return d.width;
             })
             .attr("stroke", function(d) {
-                return colorScale[d.property]
+                console.log(d.property);
+                if (d.property == 4) return "red";
+                return colorScale[d.property];
             })
             .on("mouseover", function(d) {
                 tooptip.html("property:" + self.property_class[d.property])
@@ -185,12 +204,14 @@ var draw_view1 = {
             .data(node_class)
             .enter().append("circle")
             .attr("r", function(d) {
+                if (d.property == "boss") return 15;
                 if (_.contains(self.leader_node, d.id)) return 10;
                 return 5;
             })
             .attr("stroke", "white")
             .attr("stroke-width", 1)
             .style("fill", function(d) {
+                if (d.property == "boss") return "red";
                 return colorScale[_.indexOf(self.property_class, d.property)];
             })
             .call(d3.drag()

@@ -1,14 +1,14 @@
 #top_div {
     position: absolute;
     width: 100%;
-    height: 70%;
+    height: 60%;
 }
 
 #bottom_div {
-    top: 70%;
+    top: 60%;
     position: absolute;
     width: 100%;
-    height: 30%;
+    height: 40%;
 }
 
 #top_left_div {
@@ -37,12 +37,6 @@
     padding: 2px;
 }
 
-#top_middle_bottom_div {
-    width: 100%;
-    height: 50%;
-    padding: 2px;
-}
-
 #top_right_div {
     float: left;
     width: 20%;
@@ -52,14 +46,14 @@
 
 #bottom_left_div {
     float: left;
-    width: 65%;
+    width: 50%;
     height: 100%;
     padding: 2px;
 }
 
 #bottom_right_div {
     float: left;
-    width: 35%;
+    width: 50%;
     height: 100%;
     padding: 2px;
 }
@@ -120,6 +114,7 @@
 .axis line {
     fill: none;
     stroke: black;
+    stroke-width: 1px;
     shape-rendering: crispEdges;
 }
 

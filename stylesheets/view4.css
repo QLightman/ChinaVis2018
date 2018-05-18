@@ -1,0 +1,19 @@
+.zoom {
+    cursor: move;
+    fill: none;
+}
+
+circle {
+    //  fill: brown;
+    //fill-opacity: 0.8;
+}
+
+.axis {
+    stroke-width: 0.5px;
+    stroke: #888;
+    font: 10px avenir next, sans-serif;
+}
+
+.axis>path {
+    stroke: #888;
+}
