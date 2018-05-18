@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+
+<head>
+    <style>
+
+    </style>
+    <script src="lib/d3.v3.min.js"></script>
+    <script src="lib/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <div style="margin-left: 20px"><input name="test" type="checkbox" value="0" />up
+        <input name="test" type="checkbox" value="1" />down<br>
+        <input name="test" type="checkbox" value="2" />smtp
+        <input name="test" type="checkbox" value="3" />ssh
+        <input name="test" type="checkbox" value="4" />ftp
+        <input name="test" type="checkbox" value="5" />tds
+        <input name="test" type="checkbox" value="6" />mysql
+        <input name="test" type="checkbox" value="7" />mongodb
+        <input name="test" type="checkbox" value="8" />postgresql
+        <input name="test" type="checkbox" value="9" />sftp
+        <input name="test" type="checkbox" value="10" />http</div>
+
+
+    <div id="chart"></div>
+    <div id="dataset-picker">
+
+    </div>
+    <script type="text/javascript">
+        var boxes = document.getElementsByName("test");
+        var typeval = 0;
+        var up = 0;
+        var hello = function() {
+            if (boxes[0].checked == true) {
+                up = 1;
+            }
+            if (boxes[1].checked == true) {
+                up = 0;
+            }
+            for (var i = 0; i < boxes.length - 2; i++) {
+
+                if (boxes[i + 2].checked == true) {
+                    typeval = 2 * i + parseInt(up);
+                }
+            }
+        }
+        var t1 = window.setInterval("hello()", 1000);
+
+        var margin = {
+                top: 50,
+                right: 30,
+                bottom: 100,
+                left: 100
+            },
+            width = 500 - margin.left - margin.right,
+            height = 750 - margin.top - margin.bottom,
+            gridSize = Math.floor(width / 24),
+            legendElementWidth = gridSize * 3,
+            buckets = 9,
+            colors = ["#ffffd9", "#edf8b1", "#c7e9b4", "#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#253494", "#081d58"], // alternatively colorbrewer.YlGnBu[9]
+            days = ["1st,Thur", "", "", "", "5th,Mon", "", "", "", "", "", "", "12th,Mon", "", "", "", "", "", "", "19th,Mon", "", "", "", "", "", "", "26th,Mon", "", "", "", ""],
+            times = ["1:00AM", "", "", "", "", "6:00AM", "", "", "", "", "", "12:00AM", "", "", "", "", "", "6:00PM", "", "", "", "", "", "12:00PM"];
+
+        var svg = d3v3.select("#chart").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        var dayLabels = svg.selectAll(".dayLabel")
+            .data(days)
+            .enter().append("text")
+            .text(function(d) {
+                return d;
+            })
+            .attr("x", 0)
+            .attr("y", function(d, i) {
+                return i * gridSize;
+            })
+            .style("text-anchor", "end")
+            .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
+            .attr("class", function(d, i) {
+                return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis");
+            });
+
+        var timeLabels = svg.selectAll(".timeLabel")
+            .data(times)
+            .enter().append("text")
+            .text(function(d) {
+                return d;
+            })
+            .attr("x", function(d, i) {
+                return i * gridSize;
+            })
+            .attr("y", 0)
+            .style("text-anchor", "middle")
+            .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+            .attr("class", function(d, i) {
+                return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis");
+            });
+
+
+        var draww = function(data, type) {
+            var tyoe = parseInt(type);
+            var dataset = [];
+            //alert(data[100].value);
+            for (var i = 0; i < data.length; i++) {
+                dataset[i] = data[i].value[type];
+            }
+
+            var maxval = Math.max.apply(Math, dataset);
+
+            var colorScale = d3v3.scale.quantile()
+                .domain([0, buckets - 1, maxval])
+                .range(colors);
+
+            var cards = svg.selectAll(".hour")
+                .data(data, function(d) {
+                    return d.day + ':' + d.hour;
+                });
+
+            cards.append("title");
+
+            cards.enter().append("rect")
+                .attr("x", function(d) {
+                    return (d.hour - 1) * gridSize;
+                })
+                .attr("y", function(d) {
+                    return (d.day - 1) * gridSize;
+                })
+                .attr("rx", 4)
+                .attr("ry", 4)
+                .attr("class", "hour bordered")
+                .attr("width", gridSize)
+                .attr("height", gridSize)
+                .style("fill", colors[0]);
+
+            cards.transition().duration(1000)
+                .style("fill", function(d) {
+                    return colorScale(d.value[type]);
+                });
+
+            cards.select("title").text(function(d) {
+                return d.value[type];
+            });
+
+            cards.exit().remove();
+
+            var legend = svg.selectAll(".legend")
+                .data([0].concat(colorScale.quantiles()), function(d) {
+                    return d;
+                });
+
+            legend.enter().append("g")
+                .attr("class", "legend");
+
+            legend.append("rect")
+                .attr("x", function(d, i) {
+                    return legendElementWidth * i;
+                })
+                .attr("y", height - 120)
+                .attr("width", legendElementWidth)
+                .attr("height", gridSize / 2)
+                .style("fill", function(d, i) {
+                    return colors[i];
+                })
+                .on("click", function() {
+                    alert(typeval);
+                })
+
+            legend.append("text")
+                .attr("class", "mono")
+                .text(function(d) {
+                    return "≥ " + Math.round(d);
+                })
+                .attr("x", function(d, i) {
+                    return legendElementWidth * i;
+                })
+                .attr("y", height + gridSize - 120);
+
+            legend.exit().remove();
+
+
+        };
+
+        var get_view5_data = function(id) {
+            var self = this;
+            var url = 'http://localhost:8080/getPersonalAllDetails?id=' + id;
+            $.ajax(url, {
+                data: {},
+                dataType: 'json',
+                crossDomain: true,
+                success: function(data) {
+                    console.log(data);
+                    var totaldata = [];
+                    for (var j = 1; j < 10; j++) {
+                        var currenttime = String("2017-11-0" + j);
+                        var currentdata = data[currenttime];
+                        //alert(currentdata.smtp[0].down);
+                        if (currentdata == null) {
+                            for (var i = 0; i < 24; i++) {
+                                var a = {};
+                                a.day = j;
+                                a.hour = i + 1;
+                                a.value = [];
+                                for (var p = 0; p < 18; p++) {
+                                    a.value[p] = 0;
+                                }
+                                var kk = parseInt(j * 24) + parseInt(i) - parseInt(24);
+
+                                totaldata[kk] = a;
+                            }
+
+                        } else {
+                            for (var i = 0; i < 24; i++) {
+                                var a = {};
+                                a.day = j;
+                                a.hour = i + 1;
+                                a.value = [];
+                                var k = parseInt(2 * i);
+                                //alert(currentdata.smtp[k].down);
+                                a.value[0] = parseInt(currentdata.smtp[k].down) + parseInt(currentdata.smtp[k + 1].down);
+                                a.value[1] = parseInt(currentdata.smtp[k].up) + parseInt(currentdata.smtp[k + 1].up);
+                                a.value[2] = parseInt(currentdata.ssh[k].down) + parseInt(currentdata.ssh[k + 1].down);
+                                a.value[3] = parseInt(currentdata.ssh[k].up) + parseInt(currentdata.ssh[k + 1].up);
+                                a.value[4] = parseInt(currentdata.ftp[k].down) + parseInt(currentdata.ftp[k + 1].down);
+                                a.value[5] = parseInt(currentdata.ftp[k].up) + parseInt(currentdata.ftp[k + 1].up);
+                                a.value[6] = parseInt(currentdata.tds[k].down) + parseInt(currentdata.tds[k + 1].down);
+                                a.value[7] = parseInt(currentdata.tds[k].up) + parseInt(currentdata.tds[k + 1].up);
+                                a.value[8] = parseInt(currentdata.mysql[k].down) + parseInt(currentdata.mysql[k + 1].down);
+                                a.value[9] = parseInt(currentdata.mysql[k].up) + parseInt(currentdata.mysql[k + 1].up);
+                                a.value[10] = parseInt(currentdata.mongodb[k].down) + parseInt(currentdata.mongodb[k + 1].down);
+                                a.value[11] = parseInt(currentdata.mongodb[k].up) + parseInt(currentdata.mongodb[k + 1].up);
+                                a.value[12] = parseInt(currentdata.postgresql[k].down) + parseInt(currentdata.postgresql[k + 1].down);
+                                a.value[13] = parseInt(currentdata.postgresql[k].up) + parseInt(currentdata.postgresql[k + 1].up);
+                                a.value[14] = parseInt(currentdata.sftp[k].down) + parseInt(currentdata.sftp[k + 1].down);
+                                a.value[15] = parseInt(currentdata.sftp[k].up) + parseInt(currentdata.sftp[k + 1].up);
+                                a.value[16] = parseInt(currentdata.http[k].down) + parseInt(currentdata.http[k + 1].down);
+                                a.value[17] = parseInt(currentdata.http[k].up) + parseInt(currentdata.http[k + 1].up);
+                                var kk = parseInt(j * 24) + parseInt(i) - parseInt(24);
+
+                                totaldata[kk] = a;
+                            }
+                        }
+                    }
+
+
+                    for (var j = 10; j < 31; j++) {
+                        var currenttime = "2017-11-" + j;
+                        var currentdata = data[currenttime];
+                        if (currentdata == null) {
+                            for (var i = 0; i < 24; i++) {
+                                var a = {};
+                                a.day = j;
+                                a.hour = i + 1;
+                                a.value = [];
+                                for (var p = 0; p < 18; p++) {
+                                    a.value[p] = 0;
+                                }
+                                var kk = parseInt(j * 24) + parseInt(i) - parseInt(24);
+                                totaldata[kk] = a;
+                            }
+
+
+                        } else {
+                            for (var i = 0; i < 24; i++) {
+                                var a = {};
+                                a.day = j;
+                                a.hour = i + 1;
+                                a.value = [];
+                                var k = 2 * i;
+                                a.value[0] = parseInt(currentdata.smtp[k].down) + parseInt(currentdata.smtp[k + 1].down);
+                                a.value[1] = parseInt(currentdata.smtp[k].up) + parseInt(currentdata.smtp[k + 1].up);
+                                a.value[2] = parseInt(currentdata.ssh[k].down) + parseInt(currentdata.ssh[k + 1].down);
+                                a.value[3] = parseInt(currentdata.ssh[k].up) + parseInt(currentdata.ssh[k + 1].up);
+                                a.value[4] = parseInt(currentdata.ftp[k].down) + parseInt(currentdata.ftp[k + 1].down);
+                                a.value[5] = parseInt(currentdata.ftp[k].up) + parseInt(currentdata.ftp[k + 1].up);
+                                a.value[6] = parseInt(currentdata.tds[k].down) + parseInt(currentdata.tds[k + 1].down);
+                                a.value[7] = parseInt(currentdata.tds[k].up) + parseInt(currentdata.tds[k + 1].up);
+                                a.value[8] = parseInt(currentdata.mysql[k].down) + parseInt(currentdata.mysql[k + 1].down);
+                                a.value[9] = parseInt(currentdata.mysql[k].up) + parseInt(currentdata.mysql[k + 1].up);
+                                a.value[10] = parseInt(currentdata.mongodb[k].down) + parseInt(currentdata.mongodb[k + 1].down);
+                                a.value[11] = parseInt(currentdata.mongodb[k].up) + parseInt(currentdata.mongodb[k + 1].up);
+                                a.value[12] = parseInt(currentdata.postgresql[k].down) + parseInt(currentdata.postgresql[k + 1].down);
+                                a.value[13] = parseInt(currentdata.postgresql[k].up) + parseInt(currentdata.postgresql[k + 1].up);
+                                a.value[14] = parseInt(currentdata.sftp[k].down) + parseInt(currentdata.sftp[k + 1].down);
+                                a.value[15] = parseInt(currentdata.sftp[k].up) + parseInt(currentdata.sftp[k + 1].up);
+                                a.value[16] = parseInt(currentdata.http[k].down) + parseInt(currentdata.http[k + 1].down);
+                                a.value[17] = parseInt(currentdata.http[k].up) + parseInt(currentdata.http[k + 1].up);
+                                var kk = parseInt(j * 24) + parseInt(i) - parseInt(24);
+                                totaldata[kk] = a;
+                            }
+                        }
+                        //alert("this"+ j +": " + totaldata[0].value[0]);
+                    }
+
+                    draww(totaldata, typeval);
+                }
+            });
+
+        }
+
+
+
+
+        var t2 = window.setInterval(function() {
+            get_view5_data(1207);
+        }, 1000);
+    </script>
+</body>
+
+</html>
+
+</html>

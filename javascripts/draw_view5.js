@@ -197,6 +197,7 @@ var draw_view5 = {
                 if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
                 var s = d3.event.selection || x2.range();
                 x.domain(s.map(x2.invert, x2));
+                console.log(x.domain());
                 focus.selectAll(".message")
                     .attr("x", function(d) {
                         return x(d.day);
@@ -247,6 +248,8 @@ var draw_view5 = {
             if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
             var s = d3.event.selection || x2.range();
             x.domain(s.map(x2.invert, x2));
+            console.log(x.domain());
+
             focus.selectAll(".message")
                 .attr("x", function(d) {
                     return x(d.day);
