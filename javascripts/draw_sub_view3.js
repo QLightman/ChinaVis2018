@@ -133,7 +133,7 @@ var draw_sub_view3 = {
                 tooptip.style("opacity", 0.0);
             })
             .on("click", function(d) {
-                draw_view1.get_view3_data(d.id, 1);
+                draw_view1.get_view3_data(d.id, 1, 0);
                 $("#top_middle_bottom_div").show();
                 $("#sub_top_middle_bottom_div").hide();
             })

@@ -7,6 +7,7 @@ var draw_view3 = {
     graph_line: 0,
     yScale: 0,
     xScale: 0,
+    time: 0,
     initialize: function(min, max) {
         var self = this;
         self.div = "#view3";
@@ -15,16 +16,21 @@ var draw_view3 = {
         self.view = d3v3.select(self.div).append("svg")
             .attr("width", self.width)
             .attr("height", self.height);
-        console.log(self.width)
+        self.time = ["2017-11-01 00:00:00", "2017-11-05 00:00:00"];
     },
-    get_view3_data: function(chosen_id, list) {
+    get_view3_data: function(chosen_id, list, time) {
         console.log(list)
         var self = this;
+        if (time != 0) self.time = time;
         var ids = [];
         for (var i = 0; i < list.length - 1; i++)
             ids += list[i] + ',';
         ids = ids + list[list.length - 1];
-        var url = 'http://localhost:8080/getGroupOverview?ids=' + ids + '&date1=2017-11-01 00:00:00&date2=2017-11-05 00:00:00';
+        var url = 'http://localhost:8080/getGroupOverview?ids=' + ids + '&date1=' + self.time[0] + '&date2=' + self.time[1];;
+        console.log("-------------------");
+        console.log(url);
+        console.log("-------------------");
+
         $.ajax(url, {
             data: {},
             dataType: 'json',

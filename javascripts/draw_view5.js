@@ -6,6 +6,8 @@ var draw_view5 = {
     view: 0,
     margin: 0,
     margin2: 0,
+    time_text: 0,
+
     initialize: function() {
         var self = this;
         self.div = "#view5";
@@ -22,9 +24,8 @@ var draw_view5 = {
     },
     draw: function() {
         var self = this;
-        var list = [];
 
-        var parseTime = d3.timeParse("%m" + "%d,%H");
+        var parseTime = d3.timeParse("%Y,%m" + "%d,%H");
 
         var x = d3.scaleTime().range([0, self.width]),
             x2 = d3.scaleTime().range([0, self.width]),
@@ -74,7 +75,7 @@ var draw_view5 = {
         var draww = function(data) {
             data.forEach(function(d) {
 
-                d.day = parseTime("11" + d.day + "," + d.hour);
+                d.day = parseTime("2017,11" + d.day + "," + d.hour);
             });
 
 
@@ -84,7 +85,7 @@ var draw_view5 = {
             var xMax = d3.max(data, function(d) {
                 return d.day;
             });
-            var yMax = 150;
+            var yMax = 180;
             x.domain([xMin, xMax]);
             y.domain([0, yMax]);
             x2.domain(x.domain());
@@ -115,18 +116,39 @@ var draw_view5 = {
                 .attr("y", function(d) {
                     return y(d.count);
                 })
-                .on("click", function(d) {
+                // .on("click", function(d) {
 
+            //     d3.select(this)
+            //         .attr("fill", "yellow");
+            //     list = d.idList;
+            //     alert(list);
+            // })
+            // .on("mouseout", function() {
+            //     d3.select(this)
+            //         .transition()
+            //         .duration(500)
+            //         .attr("fill", "brown");
+            // })
+            .on("mouseover", function(d) {
                     d3.select(this)
                         .attr("fill", "yellow");
-                    list = d.idList;
-                    alert(list);
+                    var string = [];
+                    for (var i = 0; i < d.idList.length; i++) {
+                        string = string + d.idList[i] + " ";
+                        if ((i + 1) % 5 == 0) string += "<br>";
+                    }
+                    draw_view1.highlight_node(d.idList, 1);
+                    tooptip.html(string)
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY + 20) + "px")
+                        .style("opacity", 1);
                 })
-                .on("mouseout", function() {
+                .on("mouseout", function(d) {
                     d3.select(this)
-                        .transition()
-                        .duration(500)
                         .attr("fill", "brown");
+                    draw_view1.highlight_node(d.idList, 0);
+
+                    tooptip.style("opacity", 0.0);
                 })
             focus.append("g")
                 .attr("class", "axis x-axis")
@@ -146,8 +168,9 @@ var draw_view5 = {
                 .style("text-anchor", "middle")
                 .text("Messages (in the day)");
 
-            focus.append("text")
-                .attr("x", self.width - self.margin.right)
+            self.time_text = focus.append("text")
+                .attr("x", self.width / 1.3)
+                .attr("y", 0)
                 .attr("dy", "1em")
                 .attr("text-anchor", "end")
                 .text("Messages: " + num_messages(data, x));
@@ -174,7 +197,7 @@ var draw_view5 = {
                 .enter().append("circle")
                 .attr('class', 'messageContext')
                 .attr("r", 4)
-                .style("fill", "blue")
+                .style("fill", "steelblue")
                 .style("opacity", .5)
                 .attr("cx", function(d) {
                     return x2(d.day);
@@ -192,39 +215,6 @@ var draw_view5 = {
                 .attr("class", "brush")
                 .call(brush)
                 .call(brush.move, x.range());
-
-            function brushed() {
-                if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
-                var s = d3.event.selection || x2.range();
-                x.domain(s.map(x2.invert, x2));
-                console.log(x.domain());
-                focus.selectAll(".message")
-                    .attr("x", function(d) {
-                        return x(d.day);
-                    })
-                    .attr("y", function(d) {
-                        return y(d.count);
-                    })
-                focus.select(".x-axis").call(xAxis);
-                self.view.select(".zoom").call(zoom.transform, d3.zoomIdentity
-                    .scale(self.width / (s[1] - s[0]))
-                    .translate(-s[0], 0));
-            }
-
-            function zoomed() {
-                if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
-                var t = d3.event.transform;
-                focus.selectAll(".message")
-                    .attr("x", function(d) {
-                        return x(d.day);
-                    })
-                    .attr("y", function(d) {
-                        return y(d.count);
-                    });
-                focus.select(".x-axis").call(xAxis);
-                context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
-
-            }
         }
 
         function get_view4_data() {
@@ -242,14 +232,14 @@ var draw_view5 = {
 
         }
 
-
         //create brush function redraw scatterplot with selection
         function brushed() {
             if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
             var s = d3.event.selection || x2.range();
             x.domain(s.map(x2.invert, x2));
-            console.log(x.domain());
-
+            var result = self.get_time_domain(x.domain());
+            self.time_text
+                .text("Time duraction: " + result[0] + "----" + result[1]);
             focus.selectAll(".message")
                 .attr("x", function(d) {
                     return x(d.day);
@@ -278,5 +268,19 @@ var draw_view5 = {
 
         }
         get_view4_data();
+    },
+    get_time_domain(view0_domain) {
+        var self = this;
+        for (var i = 0; i < 2; i++) {
+            view0_domain[i] = view0_domain[i].toString().split(' ');
+            view0_domain[i] = view0_domain[i][3] + "-11-" + view0_domain[i][2] + " " + view0_domain[i][4];
+        }
+        console.log(view0_domain);
+        draw_view2.get_view2_data("1067", view0_domain);
+        draw_view3.get_view3_data("1125", ["1125", "1307", "1398", "1113"], view0_domain);
+
+        return view0_domain;
     }
+
+
 }

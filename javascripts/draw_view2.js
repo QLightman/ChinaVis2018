@@ -11,6 +11,7 @@ var draw_view2 = {
     rect_height: 0,
     text: 0,
     height_position: 0,
+    time: 0,
     initialize: function() {
         var self = this;
         self.div = "#view2";
@@ -25,11 +26,15 @@ var draw_view2 = {
         self.rect_height = self.height / 4;
         self.g = self.view.append("g");
         self.height_position = self.height * 0.45;
+        self.time = ["2017-11-01 00:00:00", "2017-11-05 00:00:00"];
 
     },
-    get_view2_data(id) {
+    get_view2_data(id, time) {
         var self = this;
-        var url = 'http://localhost:8080/getPersonalOverview?id=' + id + '&date1=2017-11-01 00:00:00&date2=2017-11-05 00:00:00';
+        if (time != 0) self.time = time;
+
+        var url = 'http://localhost:8080/getPersonalOverview?id=' + id + '&date1=' + self.time[0] + '&date2=' + self.time[1];
+        console.log("url  " + url);
         $.ajax(url, {
             data: {},
             dataType: 'json',

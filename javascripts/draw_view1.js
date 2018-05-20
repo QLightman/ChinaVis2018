@@ -45,7 +45,6 @@ var draw_view1 = {
             dataType: 'json',
             crossDomain: true,
             success: function(data) {
-                console.log(data)
                 var node_array = [];
 
                 d3.text("http://localhost:8080/getFileChinavis_group", function(error, group) {
@@ -70,7 +69,6 @@ var draw_view1 = {
                 }
                 node_array = _.union(node_array);
                 for (var i = 0; i < self.group_array.length; i++) self.group_array[i] = _.union(self.group_array[i]);
-                console.log(self.group_array)
                 var node_class = [],
                     line_class = [];
 
@@ -185,7 +183,6 @@ var draw_view1 = {
                 return d.width;
             })
             .attr("stroke", function(d) {
-                console.log(d.property);
                 if (d.property == 4) return "red";
                 return colorScale[d.property];
             })
@@ -219,10 +216,10 @@ var draw_view1 = {
                 .on("drag", dragged)
                 .on("end", dragended))
             .on("mouseover", function(d) {
-                draw_view2.get_view2_data(d.id);
+                draw_view2.get_view2_data(d.id, 0);
                 $("#top_middle_bottom_div").hide();
                 $("#sub_top_middle_bottom_div").show();
-                self.get_view3_data(d.id, 0);
+                self.get_view3_data(d.id, 0, 0);
                 d3.select(this).raise().classed("active", true);
                 tooptip.html("id:" + d.id)
                     .style("left", (d3.event.pageX) + "px")
@@ -234,7 +231,7 @@ var draw_view1 = {
                 tooptip.style("opacity", 0.0);
             })
             .on("click", function(d) {
-                self.get_view3_data(d.id, 1);
+                self.get_view3_data(d.id, 1, 0);
                 $("#top_middle_bottom_div").show();
                 $("#sub_top_middle_bottom_div").hide();
             })
@@ -295,6 +292,15 @@ var draw_view1 = {
         }
 
     },
+    highlight_node: function(list, flag) {
+        var self = this;
+        self.graph_node
+            .attr("stroke", function(d) {
+                if (_.contains(list, d.id))
+                    return (flag == 1) ? "black" : "white";
+            })
+            .attr("stroke-width", 2)
+    },
     get_view3_data: function(id, flag) {
         d3.text("http://localhost:8080/getFileChinavis_group", function(error, group) {
             if (error) console.log(error);
@@ -306,7 +312,7 @@ var draw_view1 = {
                 for (var index = 0; index < group.length; index++) {
                     if (_.contains(group[index], id)) {
                         if (flag == 1)
-                            draw_view3.get_view3_data(id, group[index]);
+                            draw_view3.get_view3_data(id, group[index], 0);
                         else draw_sub_view3.get_sub_view3_data(id, group[index]);
                         return;
                     }
