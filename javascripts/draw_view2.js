@@ -12,6 +12,7 @@ var draw_view2 = {
     text: 0,
     height_position: 0,
     time: 0,
+    node_id: 0,
     initialize: function() {
         var self = this;
         self.div = "#view2";
@@ -26,14 +27,17 @@ var draw_view2 = {
         self.rect_height = self.height / 4;
         self.g = self.view.append("g");
         self.height_position = self.height * 0.45;
-        self.time = ["2017-11-01 00:00:00", "2017-11-05 00:00:00"];
 
     },
     get_view2_data(id, time) {
         var self = this;
-        if (time != 0) self.time = time;
+        self.time = (time == 0) ? ["2017-11-01 00:00:00", "2017-11-05 00:00:00"] : time;
+        self.node_id = (id == 0) ? "1067" : id;
+        console.log("time");
+        console.log(self.time);
+        console.log("time");
 
-        var url = 'http://localhost:8080/getPersonalOverview?id=' + id + '&date1=' + self.time[0] + '&date2=' + self.time[1];
+        var url = 'http://localhost:8080/getPersonalOverview?id=' + self.node_id + '&date1=' + self.time[0] + '&date2=' + self.time[1];
         console.log("url  " + url);
         $.ajax(url, {
             data: {},

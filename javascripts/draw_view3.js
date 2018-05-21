@@ -16,12 +16,12 @@ var draw_view3 = {
         self.view = d3v3.select(self.div).append("svg")
             .attr("width", self.width)
             .attr("height", self.height);
-        self.time = ["2017-11-01 00:00:00", "2017-11-05 00:00:00"];
     },
     get_view3_data: function(chosen_id, list, time) {
         console.log(list)
         var self = this;
-        if (time != 0) self.time = time;
+        self.time = (time == 0) ? ["2017-11-01 00:00:00", "2017-11-05 00:00:00"] : time;
+
         var ids = [];
         for (var i = 0; i < list.length - 1; i++)
             ids += list[i] + ',';

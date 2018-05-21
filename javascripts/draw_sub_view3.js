@@ -120,7 +120,7 @@ var draw_sub_view3 = {
                 .on("drag", dragged)
                 .on("end", dragended))
             .on("mouseover", function(d) {
-                draw_view2.get_view2_data(d.id);
+                draw_view2.get_view2_data(d.id, 0);
 
                 d3.select(this).raise().classed("active", true);
                 tooptip.html("id:" + d.id)
