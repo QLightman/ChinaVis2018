@@ -3,19 +3,22 @@ var draw_view4 = {
     width: 0,
     height: 0,
     gridSize: 0,
+    gridSizeh: 0,
     legendElementWidth: 0,
     buckets: 0,
     outtime: 0,
     outday: 0,
     div: 0,
     view: 0,
+    node_id: 0,
     initialize: function() {
         var self = this;
         self.div = "#view4";
-        self.margin = { top: 50, right: 30, bottom: 100, left: 100 };
+        self.margin = { top: 5, right: 3, bottom: 20, left: 50 };
         self.width = $(self.div).width() - self.margin.left - self.margin.right;
         self.height = $(self.div).height() - self.margin.top - self.margin.bottom;
         self.gridSize = Math.floor(self.width / 24);
+        self.gridSizeh = Math.floor(self.height / 30);
         self.legendElementWidth = self.gridSize * 3;
         self.buckets = 8;
         self.view = d3v3.select("#view4").append("svg")
@@ -23,7 +26,8 @@ var draw_view4 = {
             .attr("height", self.height + self.margin.top + self.margin.bottom)
             .append("g")
             .attr("transform", "translate(" + self.margin.left + "," + self.margin.top + ")");
-        self.draw();
+        self.node_id = "1207";
+        self.draw(self.node_id);
     },
     draw: function(id) {
         var self = this;
@@ -62,10 +66,10 @@ var draw_view4 = {
             })
             .attr("x", 0)
             .attr("y", function(d, i) {
-                return i * self.gridSize;
+                return i * self.gridSizeh;
             })
             .style("text-anchor", "end")
-            .attr("transform", "translate(-6," + self.gridSize / 1.5 + ")")
+            .attr("transform", "translate(-6," + self.gridSizeh / 1.5 + ")")
             .attr("class", function(d, i) {
                 return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis");
             });
@@ -113,30 +117,46 @@ var draw_view4 = {
                     return (d.hour - 1) * self.gridSize;
                 })
                 .attr("y", function(d) {
-                    return (d.day - 1) * self.gridSize;
+                    return (d.day - 1) * self.gridSizeh;
                 })
-                .attr("rx", 4)
-                .attr("ry", 4)
                 .attr("class", "hour bordered")
                 .attr("width", self.gridSize)
-                .attr("height", self.gridSize)
+                .attr("height", self.gridSizeh)
                 .style("fill", colors[0])
                 //.on('mouseover', tip.show)
                 //.on('mouseout', tip.hide)
                 .on("click", function(d) {
                     self.outday = d.day;
                     self.outtime = d.hour;
-                    alert(self.outday + " " + self.outtime);
-                });
+                    // alert(self.outday + " " + self.outtime);
+                    var result = self.outday;
+                    if (result < 10) result = "0" + result;
+                    draw_view6.get_view6_data(0, result);
 
-            cards.transition().duration(1000)
+                })
+                .on("mouseover", function(d, i) {
+                    self.outday = d.day;
+                    self.outtime = d.hour;
+                    d3.select(this).raise().classed("active", true);
+                    tooptip.html("2018.11." + self.outday + "  " + (self.outtime - 1) + ":00--" + (self.outtime) +
+                            ":00<br>value: " + d.value[type])
+                        .style("left", (d3v3.event.pageX) + "px")
+                        .style("top", (d3v3.event.pageY + 20) + "px")
+                        .style("opacity", 1);
+                })
+                .on("mouseout", function(d) {
+                    d3.select(this).classed("active", false);
+                    tooptip.style("opacity", 0.0);
+                })
+
+            cards.transition().duration(100)
                 .style("fill", function(d) {
                     return colorScale(d.value[type]);
                 });
 
-            cards.select("title").text(function(d) {
-                return d.value[type];
-            });
+            // cards.select("title").text(function(d) {
+            //     return d.value[type];
+            // });
 
             cards.exit().remove();
 
@@ -152,9 +172,9 @@ var draw_view4 = {
                 .attr("x", function(d, i) {
                     return self.legendElementWidth * i;
                 })
-                .attr("y", self.height - 120)
+                .attr("y", 30 * self.gridSizeh + 10)
                 .attr("width", self.legendElementWidth)
-                .attr("height", self.gridSize / 2)
+                .attr("height", self.gridSizeh / 2)
                 .style("fill", function(d, i) {
                     return colors[i];
                 })
@@ -174,7 +194,7 @@ var draw_view4 = {
                 .attr("x", function(d, i) {
                     return self.legendElementWidth * i;
                 })
-                .attr("y", self.height + self.gridSize - 120);
+                .attr("y", 31 * self.gridSizeh + 10);
 
             legend.exit().remove();
 
@@ -299,14 +319,14 @@ var draw_view4 = {
         }
 
 
-        get_view4_data(1207);
+        get_view4_data(id);
         $('input:radio[name="tt"]').change(function() {
             hello();
-            get_view4_data(1207);
+            get_view4_data(id);
         });
         $('input:radio[name="test"]').change(function() {
             hello();
-            get_view4_data(1207);
+            get_view4_data(id);
         });
     }
 }

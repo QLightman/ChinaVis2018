@@ -6,12 +6,13 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.min.css">
     <link rel="stylesheet" href="stylesheets/main.css">
     <link rel="stylesheet" href="stylesheets/view4.css">
-
+    <link rel="stylesheet" href="stylesheets/view6.css">
     <script src="lib/jquery.min.js"></script>
     <script src="lib/underscore-min.js"></script>
     <script src="lib/d3.min.js"></script>
     <script src="lib/bootstrap.min.js"></script>
     <script src="lib/d3.v3.min.js"></script>
+    <script src="lib/d3.v5.min.js"></script>
     <script src="lib/numeric-1.2.6.min.js"></script>
 </head>
 
@@ -48,6 +49,27 @@
             </div>
         </div>
         <div id="top_right_div" class="outer-div">
+            <div id="view4_select" class="block-div">
+                <center>
+                    <input name="tt" type="radio" value="0" />up
+                    <input name="tt" type="radio" value="1" checked="true" />down
+                </center>
+                <center>
+                    <input name="test" type="radio" value="2" checked="true" />smtp
+                    <input name="test" type="radio" value="3" />ssh
+                    <input name="test" type="radio" value="4" />ftp
+                    <input name="test" type="radio" value="5" />tds
+
+                    <input name="test" type="radio" value="6" />mysql
+                </center>
+                <center>
+                    <input name="test" type="radio" value="7" />mongodb
+                    <input name="test" type="radio" value="8" />postgresql
+                    <input name="test" type="radio" value="9" />sftp
+                    <input name="test" type="radio" value="10" />http
+                </center>
+
+            </div>
             <div id="view4" class="block-div">
             </div>
         </div>
@@ -59,8 +81,54 @@
         </div>
         <div id="bottom_right_div" class="outer-div">
             <div id="view6" class="block-div">
+                <div id="canvas" class="canvas_style">
+                    <svg id="draw" class="draw_style"></svg>
+                    <div id="valueUp" class="valueUp">
+                    </div>
+                    <div id="valueDown" class="valueDown">
+                    </div>
+                    <div id="valueTime" class="valueTime">
+                    </div>
+
+                    <div class="legend">
+                        <div data-v="all" style="margin-bottom: 5px;">
+                            <span class="all">all</span>
+                        </div>
+                        <div data-v="http">
+                            <span class="g c_0678BC"></span><span class="t_0678BC">http</span>
+                        </div>
+                        <div data-v="sftp">
+                            <span class="g c_FF7700"></span><span class="t_FF7700">sftp</span>
+                        </div>
+                        <div data-v="postgresql">
+                            <span class="g c_00A40F"></span><span class="t_00A40F">postgresql</span>
+                        </div>
+                        <div data-v="mongodb">
+                            <span class="g c_EA091D"></span><span class="t_EA091D">mongodb</span>
+                        </div>
+                        <div data-v="mysql">
+                            <span class="g c_9E63C5"></span><span class="t_9E63C5">mysql</span>
+                        </div>
+                        <div data-v="tds">
+                            <span class="g c_945348"></span><span class="t_945348">tds</span>
+                        </div>
+                        <div data-v="ftp">
+                            <span class="g c_F36DC6"></span><span class="t_F36DC6">ftp</span>
+                        </div>
+                        <div data-v="ssh">
+                            <span class="g c_7F7F7F"></span><span class="t_7F7F7F">ssh</span>
+                        </div>
+                        <div data-v="smtp">
+                            <span class="g c_BABF00"></span><span class="t_BABF00">smtp</span>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
+    <div id="info">
+        <span>时间：</span><b></b>
     </div>
     <script src="javascripts/draw_view1.js"></script>
     <script src="javascripts/draw_view2.js"></script>
@@ -68,6 +136,7 @@
     <script src="javascripts/draw_sub_view3.js"></script>
     <script src="javascripts/draw_view4.js"></script>
     <script src="javascripts/draw_view5.js"></script>
+    <script src="javascripts/draw_view6.js"></script>
     <script src="javascripts/initial.js"></script>
 </body>
 

@@ -3,10 +3,7 @@
     fill: none;
 }
 
-circle {
-    //  fill: brown;
-    //fill-opacity: 0.8;
-}
+circle {}
 
 .axis {
     stroke-width: 0.5px;

@@ -216,7 +216,9 @@ var draw_view1 = {
                 .on("drag", dragged)
                 .on("end", dragended))
             .on("mouseover", function(d) {
+                draw_view4.draw(d.id);
                 draw_view2.get_view2_data(d.id, 0);
+                draw_view6.get_view6_data(d.id, 0);
                 $("#top_middle_bottom_div").hide();
                 $("#sub_top_middle_bottom_div").show();
                 self.get_view3_data(d.id, 0, 0);

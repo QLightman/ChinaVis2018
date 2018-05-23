@@ -121,7 +121,7 @@ var draw_sub_view3 = {
                 .on("end", dragended))
             .on("mouseover", function(d) {
                 draw_view2.get_view2_data(d.id, 0);
-
+                draw_view4.draw(d.id);
                 d3.select(this).raise().classed("active", true);
                 tooptip.html("id:" + d.id)
                     .style("left", (d3.event.pageX) + "px")

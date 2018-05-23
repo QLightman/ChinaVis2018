@@ -27,12 +27,16 @@ var draw_view2 = {
         self.rect_height = self.height / 4;
         self.g = self.view.append("g");
         self.height_position = self.height * 0.45;
+        self.node_id = "1067";
+        self.time = ["2017-11-01 00:00:00", "2017-11-05 00:00:00"];
 
     },
     get_view2_data(id, time) {
         var self = this;
-        self.time = (time == 0) ? ["2017-11-01 00:00:00", "2017-11-05 00:00:00"] : time;
-        self.node_id = (id == 0) ? "1067" : id;
+        // self.time = (time == 0) ? ["2017-11-01 00:00:00", "2017-11-05 00:00:00"] : time;
+        if (time != 0) self.time = time;
+        //self.node_id = (id == 0) ? "1067" : id;
+        if (id != 0) self.node_id = id;
         console.log("time");
         console.log(self.time);
         console.log("time");
@@ -53,6 +57,7 @@ var draw_view2 = {
                 Person.prototype.flowDownList = 0;
                 Person.prototype.flowUpList = 0;
                 var person = new Person();
+                person.id = self.node_id;
                 person.avgCheckin = data[0].avgCheckin;
                 person.avgCheckin = parseInt(person.avgCheckin.slice(0, 2)) + parseInt(person.avgCheckin.slice(3, 5)) / 60;
                 person.avgCheckout = data[0].avgCheckout;
@@ -168,6 +173,13 @@ var draw_view2 = {
                     return "avgCheckin: " + "<br>" + check_in;
                 return "avgCheckout: " + check_out;
             })
+
+
+        var node_text = self.view.append("text")
+            .attr("class", "texts")
+            .attr("x", self.width / 1.2)
+            .attr("y", self.height * 0.5)
+            .text("id: " + data.id);
     },
     generate_Translate: function(data, scale, type) {
         var self = this;
