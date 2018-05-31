@@ -26,6 +26,8 @@ var draw_view1 = {
             .attr("id", "view1")
             .attr("width", self.width)
             .attr("height", self.height);
+        console.log("width");
+        console.log(self.width);
         self.g = self.view.append("g");
         self.get_view1_data();
         self.zooming(self.view, self.g);
@@ -33,8 +35,35 @@ var draw_view1 = {
         self.group_array = new Array(self.property_class.length);
         self.develop_group = new Array();
         self.test_array = [];
-        self.leader_node = ["1007", "1068", "1059"];
+        self.leader_node = ["1007", "1068", "1059", "1013", "1041"];
         for (var i = 0; i < self.group_array.length; i++) self.group_array[i] = new Array();
+        self.add_select();
+
+    },
+    add_select: function() {
+        d3.text("http://localhost:8080/getFileMember_epx_leader", function(error, group) {
+            if (error) console.log(error);
+            else {
+                var leader = ["1068", "1007", "1059", "1067"];
+                group = group.toString().split('\n');
+
+                group.push.apply(group, leader);
+                $("#id_select").append("<option value='" + (0) + "'>" + ("") + "</option>")
+
+                for (var i = 0; i < group.length; i++) {
+                    $("#id_select").append("<option value='" + (group[i]) + "'>" + (group[i]) + "</option>")
+                }
+                $('#id_select').chosen({
+                    width: "90%"
+                });
+                $("#id_select").change(function() {
+                    var value = $(this).val();
+                    draw_view4.draw(value);
+                    draw_view2.get_view2_data(value, 0);
+                    draw_view6.get_view6_data(value, 0);
+                })
+            }
+        })
 
     },
     get_view1_data: function() {
@@ -50,6 +79,7 @@ var draw_view1 = {
                 d3.text("http://localhost:8080/getFileChinavis_group", function(error, group) {
                     if (error) console.log(error);
                     else {
+                        console.log(group);
                         group = group.toString().split('\n');
                         for (var i = 0; i < group.length; i++) {
                             group[i] = group[i].toString().split(',');
@@ -107,6 +137,7 @@ var draw_view1 = {
 
 
                 var line_index = 0;
+                tmp_group = [];
                 for (var i = 0; i < data.length; i++) {
                     for (var j = 0; j < data[i].to.length; j++) {
                         line_class[line_index] = new LINE();
@@ -115,8 +146,12 @@ var draw_view1 = {
                         line_class[line_index].value = 10;
                         line_class[line_index].property = _.indexOf(self.property_class, data[i].subject);
                         line_index++;
+                        if (data[i].from == "1059") tmp_group.push(data[i].to[j]);
+                        if (data[i].to[j] == "1059") tmp_group.push(data[i].from);
                     }
                 }
+
+                console.log(tmp_group);
                 var boss_connect_node = ["1041", "1068", "1013", "1059", "1007"];
                 for (var i = 0; i < boss_connect_node.length; i++) {
                     line_class[line_index] = new LINE();
@@ -201,13 +236,15 @@ var draw_view1 = {
             .data(node_class)
             .enter().append("circle")
             .attr("r", function(d) {
-                if (d.property == "boss") return 15;
-                if (_.contains(self.leader_node, d.id)) return 10;
+                if (d.property == "boss") return 20;
+                if (_.contains(self.leader_node, d.id)) return 15;
                 return 5;
             })
             .attr("stroke", "white")
             .attr("stroke-width", 1)
             .style("fill", function(d) {
+                if (_.contains(self.leader_node, d.id)) return colorScale[3];
+
                 if (d.property == "boss") return "red";
                 return colorScale[_.indexOf(self.property_class, d.property)];
             })
@@ -216,6 +253,8 @@ var draw_view1 = {
                 .on("drag", dragged)
                 .on("end", dragended))
             .on("mouseover", function(d) {
+                document.getElementById("id_select").value = "1068";
+
                 draw_view4.draw(d.id);
                 draw_view2.get_view2_data(d.id, 0);
                 draw_view6.get_view6_data(d.id, 0);
@@ -304,6 +343,12 @@ var draw_view1 = {
             .attr("stroke-width", 2)
     },
     get_view3_data: function(id, flag) {
+        var sub_sub_leader = [
+            ["1154", "1191", "1207", "1100", "1098", "1209", "1060"],
+            ["1087", "1115", "1230", "1172", "1192", "1199", "1092", "1125", "1224"],
+            ["1080", "1211", "1101", "1143", "1119", "1155", "1058", "1228", "1096", "1079", "1057"]
+        ];
+
         d3.text("http://localhost:8080/getFileChinavis_group", function(error, group) {
             if (error) console.log(error);
             else {
@@ -311,14 +356,33 @@ var draw_view1 = {
                 for (var i = 0; i < group.length; i++) {
                     group[i] = group[i].toString().split(',');
                 }
-                for (var index = 0; index < group.length; index++) {
-                    if (_.contains(group[index], id)) {
-                        if (flag == 1)
-                            draw_view3.get_view3_data(id, group[index], 0);
-                        else draw_sub_view3.get_sub_view3_data(id, group[index]);
-                        return;
+                var sub_leader = ["1068", "1007", "1059"];
+                if (_.contains(sub_leader, id)) {
+                    console.log(sub_leader);
+                    var tmp_group = sub_sub_leader[_.indexOf(sub_leader, id)];
+                    var result = [id];
+                    for (var i = 0; i < tmp_group.length; i++) {
+                        for (var index = 0; index < group.length; index++) {
+                            if (_.contains(group[index], tmp_group[i])) {
+                                result.push.apply(result, group[index])
+                                continue;
+                            }
+                        }
+                    }
+
+                    draw_view3.get_view3_data(id, result, 0);
+
+                } else {
+                    for (var index = 0; index < group.length; index++) {
+                        if (_.contains(group[index], id)) {
+                            if (flag == 1)
+                                draw_view3.get_view3_data(id, group[index], 0);
+                            else draw_sub_view3.get_sub_view3_data(id, group[index]);
+                            return;
+                        }
                     }
                 }
+
             }
         })
 

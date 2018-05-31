@@ -20,7 +20,7 @@ var draw_view4 = {
         self.gridSize = Math.floor(self.width / 24);
         self.gridSizeh = Math.floor(self.height / 30);
         self.legendElementWidth = self.gridSize * 3;
-        self.buckets = 8;
+        self.buckets = 6;
         self.view = d3v3.select("#view4").append("svg")
             .attr("width", self.width + self.margin.left + self.margin.right)
             .attr("height", self.height + self.margin.top + self.margin.bottom)
@@ -51,9 +51,12 @@ var draw_view4 = {
 
         }
 
-        //var t1 = window.setInterval("hello()",1000);
+        var a = "#E0FFFF";
+        var b = "steelblue";
 
-        var colors = ["#ffffd9", "#edf8b1", "#c7e9b4", "#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#253494", "#081d58"], // alternatively colorbrewer.YlGnBu[9]
+        var compute = d3v3.interpolate(a, b);
+
+        var colors = [compute(0), compute(0.05), compute(0.1), compute(0.4), compute(0.6), compute(1)],
             days = ["1st,Thur", "", "", "", "5th,Mon", "", "", "", "", "", "", "12th,Mon", "", "", "", "", "", "", "19th,Mon", "", "", "", "", "", "", "26th,Mon", "", "", "", ""],
             times = ["1:00AM", "", "", "", "", "6:00AM", "", "", "", "", "", "12:00AM", "", "", "", "", "", "6:00PM", "", "", "", "", "", "12:00PM"];
 
@@ -172,7 +175,7 @@ var draw_view4 = {
                 .attr("x", function(d, i) {
                     return self.legendElementWidth * i;
                 })
-                .attr("y", 30 * self.gridSizeh + 10)
+                .attr("y", self.gridSizeh * 30 + 5)
                 .attr("width", self.legendElementWidth)
                 .attr("height", self.gridSizeh / 2)
                 .style("fill", function(d, i) {
@@ -194,7 +197,8 @@ var draw_view4 = {
                 .attr("x", function(d, i) {
                     return self.legendElementWidth * i;
                 })
-                .attr("y", 31 * self.gridSizeh + 10);
+                .attr("y", self.gridSizeh * 31 + 5);
+
 
             legend.exit().remove();
 
@@ -209,7 +213,6 @@ var draw_view4 = {
                 dataType: 'json',
                 crossDomain: true,
                 success: function(data) {
-                    console.log(data);
                     var totaldata = [];
                     for (var j = 1; j < 10; j++) {
                         var currenttime = String("2017-11-0" + j);

@@ -31,6 +31,7 @@ var draw_view2 = {
         self.time = ["2017-11-01 00:00:00", "2017-11-05 00:00:00"];
 
     },
+
     get_view2_data(id, time) {
         var self = this;
         // self.time = (time == 0) ? ["2017-11-01 00:00:00", "2017-11-05 00:00:00"] : time;

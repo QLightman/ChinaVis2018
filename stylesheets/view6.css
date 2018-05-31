@@ -72,14 +72,14 @@ h1 {
     height: 100%;
 }
 
-.legend {
+.legent {
     display: inline-block;
     position: absolute;
     top: 50%;
     transform: translate(0%, -50%);
 }
 
-.legend .g {
+.legent .g {
     width: 16px;
     height: 16px;
     display: inline-block;

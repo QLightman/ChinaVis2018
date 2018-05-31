@@ -11,9 +11,16 @@
     height: 40%;
 }
 
+#top_left_left_div {
+    float: left;
+    width: 8%;
+    height: 100%;
+    padding: 2px;
+}
+
 #top_left_div {
     float: left;
-    width: 50%;
+    width: 37%;
     height: 100%;
     padding: 2px;
 }
@@ -39,7 +46,7 @@
 
 #top_right_div {
     float: left;
-    width: 20%;
+    width: 25%;
     height: 100%;
     padding: 2px;
 }
@@ -63,6 +70,20 @@
     border: solid rgb(199, 199, 199);
 }
 
+.view0_outer-div {
+    border-radius: 1px;
+    border-left: solid rgb(199, 199, 199);
+    border-top: solid rgb(199, 199, 199);
+    border-bottom: solid rgb(199, 199, 199);
+}
+
+.view1_outer-div {
+    border-radius: 1px;
+    border-right: solid rgb(199, 199, 199);
+    border-top: solid rgb(199, 199, 199);
+    border-bottom: solid rgb(199, 199, 199);
+}
+
 .block-div {
     height: 100%;
     border-radius: 1px;
@@ -70,17 +91,17 @@
 
 #view3_range {
     width: 100%;
-    height: 12%;
+    height: 0%;
 }
 
 #view3_select {
     width: 100%;
-    height: 8%;
+    height: 16%;
 }
 
 #view3 {
     width: 100%;
-    height: 80%;
+    height: 84%;
 }
 
 #view4_select {

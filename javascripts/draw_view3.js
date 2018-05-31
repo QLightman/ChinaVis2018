@@ -18,7 +18,6 @@ var draw_view3 = {
             .attr("height", self.height);
     },
     get_view3_data: function(chosen_id, list, time) {
-        console.log(list)
         var self = this;
         self.time = (time == 0) ? ["2017-11-01 00:00:00", "2017-11-05 00:00:00"] : time;
 
@@ -27,16 +26,13 @@ var draw_view3 = {
             ids += list[i] + ',';
         ids = ids + list[list.length - 1];
         var url = 'http://localhost:8080/getGroupOverview?ids=' + ids + '&date1=' + self.time[0] + '&date2=' + self.time[1];;
-        console.log("-------------------");
-        console.log(url);
-        console.log("-------------------");
+
 
         $.ajax(url, {
             data: {},
             dataType: 'json',
             crossDomain: true,
             success: function(data) {
-                console.log(data)
                 for (var i = 0; i < list.length; i++) {
                     data[i].avgFlowup = parseFloat((parseInt(data[i].avgFlowup) / (Math.pow(1024, 2))).toFixed(2));
                     data[i].avgFlowDown = parseFloat((parseInt(data[i].avgFlowDown) / (Math.pow(1024, 2))).toFixed(2));
@@ -59,7 +55,6 @@ var draw_view3 = {
         var self = this;
         self.remove();
         var property = $('input:radio:checked').val();
-        console.log(property)
 
         var h_min = d3.min(data, function(d) {
             return d.avgCheckin;
@@ -72,6 +67,12 @@ var draw_view3 = {
                 return d.avgFlowDown;
             else if (property == "avgFlowup")
                 return d.avgFlowup;
+            else if (property == "IpError")
+                return d.totalIpError;
+            else if (property == "IdError")
+                return d.totalIdError;
+            else if (property == "IpError-IdError")
+                return d.totalIpError - d.totalIdError;
             return d.avgLog;
         })
         var z_max = d3.max(data, function(d) {
@@ -79,6 +80,12 @@ var draw_view3 = {
                 return d.avgFlowDown;
             else if (property == "avgFlowup")
                 return d.avgFlowup;
+            else if (property == "IpError")
+                return d.totalIpError;
+            else if (property == "IdError")
+                return d.totalIdError;
+            else if (property == "IpError-IdError")
+                return d.totalIpError - d.totalIdError;
             return d.avgLog;
         })
         console.log("------------" + z_min + " " + z_max);
@@ -126,6 +133,12 @@ var draw_view3 = {
                     tmp_value = (d.avgFlowDown);
                 else if (property == "avgFlowup")
                     tmp_value = (d.avgFlowup);
+                else if (property == "IpError")
+                    tmp_value = d.totalIpError;
+                else if (property == "IdError")
+                    tmp_value = d.totalIdError;
+                else if (property == "IpError-IdError")
+                    tmp_value = d.totalIpError - d.totalIdError;
                 else tmp_value = (d.avgLog);
 
                 return self.height * 0.9 - self.yScale(tmp_value);
@@ -135,6 +148,12 @@ var draw_view3 = {
                     tmp_value = (d.avgFlowDown);
                 else if (property == "avgFlowup")
                     tmp_value = (d.avgFlowup);
+                else if (property == "IpError")
+                    tmp_value = d.totalIpError;
+                else if (property == "IdError")
+                    tmp_value = d.totalIdError;
+                else if (property == "IpError-IdError")
+                    tmp_value = d.totalIpError - d.totalIdError;
                 else tmp_value = (d.avgLog);
                 return self.height * 0.9 - self.yScale(tmp_value);
             })
@@ -144,18 +163,24 @@ var draw_view3 = {
             })
             .attr("opacity", 0.5)
             .attr("stroke-width", function(d) {
-                if (d.staffId == chosen_id) return 2;
-                return 1;
+                if (d.staffId == chosen_id) return 3;
+                return 2;
             })
             .on("mouseover", function(d) {
                 if (property == "avgFlowDown")
                     tmp_value = (d.avgFlowDown);
                 else if (property == "avgFlowup")
                     tmp_value = (d.avgFlowup);
+                else if (property == "IpError")
+                    tmp_value = d.totalIpError;
+                else if (property == "IdError")
+                    tmp_value = d.totalIdError;
+                else if (property == "IpError-IdError")
+                    tmp_value = d.totalIpError - d.totalIdError;
                 else tmp_value = (d.avgLog);
                 d3.select(this).raise().classed("active", true);
 
-                tooptip.html(d.staffId + " " + property + " Value: " + tmp_value + "(MB)")
+                tooptip.html(d.staffId + " " + property + " Value: " + tmp_value)
                     .style("left", (d3v3.event.pageX) + "px")
                     .style("top", (d3v3.event.pageY + 20) + "px")
                     .style("opacity", 1);
@@ -168,33 +193,33 @@ var draw_view3 = {
         $("input[type='radio']").change(function() {
             draw_view3.draw(chosen_id, data);
         });
-        $("#range_slider").change(function() {
-            var value = $(this).val();
-            self.graph_line
-                .attr("opacity", function(d) {
-                    if (property == "avgFlowDown")
-                        tmp_value = (d.avgFlowDown);
-                    else if (property == "avgFlowup")
-                        tmp_value = (d.avgFlowup);
-                    else tmp_value = (d.avgLog);
-                    if ((tmp_value - z_min) >= ((z_max - z_min) * value * 0.01)) return 1;
-                    return 0.2;
-                })
-        })
-        d3.select("#range_slider").on("mouseover", function(d) {
-                tooptip.html($(this).val() + "%")
-                    .style("left", (d3.event.pageX - 10) + "px")
-                    .style("top", (d3.event.pageY + 20) + "px")
-                    .style("opacity", 1);
-            })
-            .on('mousemove', function(d) {
-                tooptip.html($(this).val() + "%")
-                tooptip.style("left", (d3.event.pageX - 10) + "px")
-                    .style("top", (d3.event.pageY + 20) + "px")
-            })
-            .on("mouseout", function(d) {
-                tooptip.style("opacity", 0.0);
-            })
+        // $("#range_slider").change(function() {
+        //     var value = $(this).val();
+        //     self.graph_line
+        //         .attr("opacity", function(d) {
+        //             if (property == "avgFlowDown")
+        //                 tmp_value = (d.avgFlowDown);
+        //             else if (property == "avgFlowup")
+        //                 tmp_value = (d.avgFlowup);
+        //             else tmp_value = (d.avgLog);
+        //             if ((tmp_value - z_min) >= ((z_max - z_min) * value * 0.01)) return 1;
+        //             return 0.2;
+        //         })
+        // })
+        // d3.select("#range_slider").on("mouseover", function(d) {
+        //         tooptip.html($(this).val() + "%")
+        //             .style("left", (d3.event.pageX - 10) + "px")
+        //             .style("top", (d3.event.pageY + 20) + "px")
+        //             .style("opacity", 1);
+        //     })
+        //     .on('mousemove', function(d) {
+        //         tooptip.html($(this).val() + "%")
+        //         tooptip.style("left", (d3.event.pageX - 10) + "px")
+        //             .style("top", (d3.event.pageY + 20) + "px")
+        //     })
+        //     .on("mouseout", function(d) {
+        //         tooptip.style("opacity", 0.0);
+        //     })
 
 
     },

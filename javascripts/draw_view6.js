@@ -7,7 +7,7 @@ var draw_view6 = {
     time: 0,
     initialize: function() {
         var self = this;
-        d3v5.select('.legend').style('right', 5);
+        d3v5.select('.legent').style('right', 5);
         var root = $('#view6');
         this.margin = {
             left: 15,
@@ -21,22 +21,17 @@ var draw_view6 = {
         self.node_id = "1207";
         self.time = "01";
 
-        console.log('this.width', this.width, 'this.height', this.height)
     },
     get_view6_data(id, time) {
         var self = this;
         if (id != 0) self.node_id = id;
         if (time != 0) self.time = time;
-        console.log(self.time);
         var url = 'http://localhost:8080//getPersonalDetails?id=' + self.node_id + '&date=2017-11-' + self.time;
-        console.log("view6 url");
-        console.log(url);
         $.ajax(url, {
             data: {},
             dataType: 'json',
             crossDomain: true,
             success: function(data) {
-                console.log(data)
                 self.draw(data);
             },
 
@@ -80,7 +75,7 @@ var draw_view6 = {
             .on('mousemove', mouseover);
         var currentData = data;
 
-        d3v5.selectAll(".legend div").on('click', function() {
+        d3v5.selectAll(".legent div").on('click', function() {
             which = this.getAttribute("data-v");
             draw(currentData);
         });
@@ -96,7 +91,6 @@ var draw_view6 = {
 
 
         var draw = (data) => {
-            console.log("draw: data: ", data);
             var tmp = {
                 "ftp": [],
                 "http": [],
@@ -122,7 +116,6 @@ var draw_view6 = {
                 tmp["ssh"].push({ "up": data["ssh"][i].up != 0 ? Math.log(data["ssh"][i].up) : 0, "down": data["ssh"][i].down != 0 ? Math.log(data["ssh"][i].down) : 0 });
                 tmp["tds"].push({ "up": data["tds"][i].up != 0 ? Math.log(data["tds"][i].up) : 0, "down": data["tds"][i].down != 0 ? Math.log(data["tds"][i].down) : 0 });
             }
-            console.log("tmp:", tmp);
 
             function timeTransform(time) {
                 if (!time || time === 'none') {
@@ -190,7 +183,6 @@ var draw_view6 = {
                 var c = color[which];
                 Object.keys(color).forEach(c => color[c] = 'rgb(0,0,0,0)');
                 color[which] = c;
-                console.log(color);
             }
 
             var stackUpArr1 = stackOrder.map(o => ({ id: o, v: data[o].map(d => +d.up) })),
@@ -222,8 +214,6 @@ var draw_view6 = {
                     })
                 }),
                 stackDownMax1 = d3v5.max(stackDownData1[stackDownData1.length - 1].v, d => d.y1);
-            //////////
-            console.log("stackUpData: ", stackUpData1);
             var stackUpArr = stackOrder.map(o => ({ id: o, v: tmp[o].map(d => +d.up) })),
 
                 stackUpData = stackUpArr.map((up, idx, arr) => {
@@ -254,7 +244,6 @@ var draw_view6 = {
                 }),
                 stackDownMax = d3v5.max(stackDownData[stackDownData.length - 1].v, d => d.y1);
 
-            console.log('stackDownData', stackDownData);
 
             //显示标签
             showLabel = (x) => {
@@ -444,7 +433,6 @@ var draw_view6 = {
             //x轴
             var xAxis = d3v5.axisBottom(xScale);
             xx.call(xAxis);
-            console.log(d3v5.selectAll("#xAxis text"));
             d3v5.selectAll("#xAxis text")
                 .html(function() {
                     var d = d3v5.select(this);
@@ -464,23 +452,20 @@ var draw_view6 = {
             ];
             checkInAndout.push(...data.login.map(login => ({ type: "login", value: timeTransform(login.time), raw: login })));
             //min_x>2?min_x-2:min_x,max_x<=21.5? max_x+2: 23.5
-            console.log("min_x>2?min_x-2:min_x", min_x > 2 ? min_x - 2 : min_x);
-            console.log("max_x<=21.5? max_x+2: 23.5", max_x <= 21.5 ? max_x + 2 : 23.5);
 
 
             checkInAndout = checkInAndout.filter(c => c.value !== null);
 
             checkInAndout = checkInAndout.filter(c => c.value >= (min_x > 2 ? min_x - 2 : min_x));
             checkInAndout = checkInAndout.filter(c => c.value <= (max_x <= 21.5 ? max_x + 2 : 23.5));
-            console.log("checkInAndout", checkInAndout);
 
             var checkInAndoutG = axisG.selectAll(".check")
                 .data(checkInAndout, d => d.value);
 
             checkInAndoutG.attr("x1", d => xScale(d.value))
                 .attr("x2", d => xScale(d.value))
-                .attr("y1", 0)
-                .attr("y2", this.height + this.margin.top + this.margin.bottom)
+                .attr("y1", 20)
+                .attr("y2", this.height + this.margin.top + this.margin.bottom - 20)
                 .style("stroke-dasharray", (d) => d.type === "login" ? "10" : "")
                 .style("stroke", d => {
                     if (d.type === "login" && d.raw.state !== "success") {
@@ -514,8 +499,8 @@ var draw_view6 = {
                 .on('mousemove.ff', mouseover)
                 .attr("x1", d => xScale(d.value))
                 .attr("x2", d => xScale(d.value))
-                .attr("y1", 0)
-                .attr("y2", this.height + this.margin.top + this.margin.bottom)
+                .attr("y1", 20)
+                .attr("y2", this.height + this.margin.top + this.margin.bottom - 20)
                 .style("stroke-dasharray", (d) => d.type === "login" ? "10" : "")
                 .style("stroke", d => {
                     if (d.type === "login" && d.raw.state !== "success") {

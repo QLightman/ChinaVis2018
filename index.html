@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>ChinaVis</title>
+    <link rel="stylesheet" href="stylesheets/chosen.min.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.min.css">
     <link rel="stylesheet" href="stylesheets/main.css">
     <link rel="stylesheet" href="stylesheets/view4.css">
@@ -14,11 +15,20 @@
     <script src="lib/d3.v3.min.js"></script>
     <script src="lib/d3.v5.min.js"></script>
     <script src="lib/numeric-1.2.6.min.js"></script>
+    <script src="lib/chosen.jquery.min.js"></script>
+
 </head>
 
 <body>
     <div id="top_div">
-        <div id="top_left_div" class="outer-div">
+        <div id="top_left_left_div" class="view0_outer-div">
+            <div id="view0">
+                <br><br><br><br>
+                <select data-placeholder="ID..." id="id_select"></select>
+            </div>
+        </div>
+        <div id="top_left_div" class="view1_outer-div">
+
             <div id="view1" class="block-div">
             </div>
         </div>
@@ -28,15 +38,20 @@
                 </div>
             </div>
             <div id="top_middle_bottom_div" class="outer-div">
-                <div id="view3_range" class="block_div">
+                <!-- <div id="view3_range" class="block_div">
                     <input id="range_slider" type="range" min="0" max="100" step="2">
-                </div>
+                </div> -->
 
                 <div id="view3_select" class="block-div">
                     <center>
                         <input type="radio" name="aaa" value="avgFlowDown" checked="checked">avgFlowDown(MB)
                         <input type="radio" name="aaa" value="avgFlowup">avgFlowup(MB)
-                        <input type="radio" name="aaa" value="avgLog"> (times)
+                        <input type="radio" name="aaa" value="avgLog"> avgLog(times)
+                        <br>
+                        <input type="radio" name="aaa" value="IpError"> IpError(times)
+                        <input type="radio" name="aaa" value="IdError"> IdError(times)
+                        <input type="radio" name="aaa" value="IpError-IdError"> ipError-idError(times)
+
                     </center>
                 </div>
                 <div id="view3" class="block-div">
@@ -90,7 +105,7 @@
                     <div id="valueTime" class="valueTime">
                     </div>
 
-                    <div class="legend">
+                    <div class="legent">
                         <div data-v="all" style="margin-bottom: 5px;">
                             <span class="all">all</span>
                         </div>
