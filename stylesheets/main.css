@@ -37,8 +37,7 @@
     padding: 2px;
 }
 
-#top_middle_bottom_div,
-#sub_top_middle_bottom_div {
+#top_middle_bottom_div {
     width: 100%;
     height: 50%;
     padding: 2px;
@@ -53,14 +52,21 @@
 
 #bottom_left_div {
     float: left;
-    width: 50%;
+    width: 35%;
+    height: 100%;
+    padding: 2px;
+}
+
+#bottom_mid_div {
+    float: left;
+    width: 30%;
     height: 100%;
     padding: 2px;
 }
 
 #bottom_right_div {
     float: left;
-    width: 50%;
+    width: 35%;
     height: 100%;
     padding: 2px;
 }

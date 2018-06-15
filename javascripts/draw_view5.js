@@ -275,8 +275,8 @@ var draw_view5 = {
             view0_domain[i] = view0_domain[i][3] + "-11-" + view0_domain[i][2] + " " + view0_domain[i][4];
         }
         draw_view2.get_view2_data(0, view0_domain);
-        draw_view3.get_view3_data("1125", ["1125", "1307", "1398", "1113"], view0_domain);
-
+        draw_view3.get_view3_data(0, 0, view0_domain);
+        draw_view7.get_view7_data(0, view0_domain);
         return view0_domain;
     }
 

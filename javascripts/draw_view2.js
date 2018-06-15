@@ -34,23 +34,14 @@ var draw_view2 = {
 
     get_view2_data(id, time) {
         var self = this;
-        // self.time = (time == 0) ? ["2017-11-01 00:00:00", "2017-11-05 00:00:00"] : time;
         if (time != 0) self.time = time;
-        //self.node_id = (id == 0) ? "1067" : id;
         if (id != 0) self.node_id = id;
-        console.log("time");
-        console.log(self.time);
-        console.log("time");
-
         var url = 'http://localhost:8080/getPersonalOverview?id=' + self.node_id + '&date1=' + self.time[0] + '&date2=' + self.time[1];
-        console.log("url  " + url);
         $.ajax(url, {
             data: {},
             dataType: 'json',
             crossDomain: true,
             success: function(data) {
-                console.log(data)
-
                 function Person() {}
                 Person.prototype.id = "A";
                 Person.prototype.avgCheckin = 0;

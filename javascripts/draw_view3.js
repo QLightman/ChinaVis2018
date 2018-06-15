@@ -8,6 +8,8 @@ var draw_view3 = {
     yScale: 0,
     xScale: 0,
     time: 0,
+    list: 0,
+    node_id: 0,
     initialize: function(min, max) {
         var self = this;
         self.div = "#view3";
@@ -16,24 +18,29 @@ var draw_view3 = {
         self.view = d3v3.select(self.div).append("svg")
             .attr("width", self.width)
             .attr("height", self.height);
+        self.node_id = "1125";
+        self.time = ["2017-11-01 00:00:00", "2017-11-05 00:00:00"];
+        self.list = ["1125", "1307", "1398", "1113"];
     },
     get_view3_data: function(chosen_id, list, time) {
         var self = this;
-        self.time = (time == 0) ? ["2017-11-01 00:00:00", "2017-11-05 00:00:00"] : time;
+        if (time != 0) self.time = time;
+        if (chosen_id != 0) self.node_id = chosen_id;
+        if (list != 0) self.list = list;
 
         var ids = [];
-        for (var i = 0; i < list.length - 1; i++)
-            ids += list[i] + ',';
-        ids = ids + list[list.length - 1];
-        var url = 'http://localhost:8080/getGroupOverview?ids=' + ids + '&date1=' + self.time[0] + '&date2=' + self.time[1];;
+        for (var i = 0; i < self.list.length - 1; i++)
+            ids += self.list[i] + ',';
+        ids = ids + self.list[self.list.length - 1];
 
-
+        var url = 'http://localhost:8080/getGroupOverview?ids=' + ids + '&date1=' + self.time[0] + '&date2=' + self.time[1];
+        console.log("url  " + url);
         $.ajax(url, {
             data: {},
             dataType: 'json',
             crossDomain: true,
             success: function(data) {
-                for (var i = 0; i < list.length; i++) {
+                for (var i = 0; i < self.list.length; i++) {
                     data[i].avgFlowup = parseFloat((parseInt(data[i].avgFlowup) / (Math.pow(1024, 2))).toFixed(2));
                     data[i].avgFlowDown = parseFloat((parseInt(data[i].avgFlowDown) / (Math.pow(1024, 2))).toFixed(2));
 
@@ -44,7 +51,7 @@ var draw_view3 = {
                     else
                         data[i].avgCheckout = parseInt(data[i].avgCheckout.slice(0, 2)) + parseInt(data[i].avgCheckout.slice(3, 5)) / 60;
                 }
-                self.draw(chosen_id, data);
+                self.draw(self.node_id, data);
             },
             error: function(data) {
                 console.error("error")
@@ -88,7 +95,6 @@ var draw_view3 = {
                 return d.totalIpError - d.totalIdError;
             return d.avgLog;
         })
-        console.log("------------" + z_min + " " + z_max);
         self.yScale = d3v3.scale.linear()
             .domain([z_min - (z_max - z_min) * 0.1, z_max])
             .range([0, self.height * 0.8]);

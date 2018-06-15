@@ -11,9 +11,8 @@ function initialize() {
     draw_view1.initialize();
     draw_view2.initialize();
     draw_view3.initialize();
-    draw_sub_view3.initialize();
     draw_view4.initialize();
     draw_view5.initialize();
     draw_view6.initialize();
-    $("#top_middle_bottom_div").hide();
+    draw_view7.initialize();
 }

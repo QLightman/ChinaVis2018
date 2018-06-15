@@ -26,8 +26,6 @@ var draw_view1 = {
             .attr("id", "view1")
             .attr("width", self.width)
             .attr("height", self.height);
-        console.log("width");
-        console.log(self.width);
         self.g = self.view.append("g");
         self.get_view1_data();
         self.zooming(self.view, self.g);
@@ -79,7 +77,6 @@ var draw_view1 = {
                 d3.text("http://localhost:8080/getFileChinavis_group", function(error, group) {
                     if (error) console.log(error);
                     else {
-                        console.log(group);
                         group = group.toString().split('\n');
                         for (var i = 0; i < group.length; i++) {
                             group[i] = group[i].toString().split(',');
@@ -151,7 +148,6 @@ var draw_view1 = {
                     }
                 }
 
-                console.log(tmp_group);
                 var boss_connect_node = ["1041", "1068", "1013", "1059", "1007"];
                 for (var i = 0; i < boss_connect_node.length; i++) {
                     line_class[line_index] = new LINE();
@@ -161,8 +157,7 @@ var draw_view1 = {
                     line_class[line_index].property = 4;
                     line_index++;
                 }
-                console.log(node_class)
-                console.log(line_class)
+
                 self.force_layout(node_class, line_class);
 
             },
@@ -231,6 +226,7 @@ var draw_view1 = {
                 tooptip.style("opacity", 0.0);
             })
 
+
         self.graph_node = self.g
             .selectAll("circle")
             .data(node_class)
@@ -258,9 +254,9 @@ var draw_view1 = {
                 draw_view4.draw(d.id);
                 draw_view2.get_view2_data(d.id, 0);
                 draw_view6.get_view6_data(d.id, 0);
-                $("#top_middle_bottom_div").hide();
-                $("#sub_top_middle_bottom_div").show();
-                self.get_view3_data(d.id, 0, 0);
+
+                self.get_view3_7_data(d.id);
+
                 d3.select(this).raise().classed("active", true);
                 tooptip.html("id:" + d.id)
                     .style("left", (d3.event.pageX) + "px")
@@ -271,11 +267,7 @@ var draw_view1 = {
                 d3.select(this).classed("active", false);
                 tooptip.style("opacity", 0.0);
             })
-            .on("click", function(d) {
-                self.get_view3_data(d.id, 1, 0);
-                $("#top_middle_bottom_div").show();
-                $("#sub_top_middle_bottom_div").hide();
-            })
+
 
         simulation
             .nodes(node_class)
@@ -342,7 +334,7 @@ var draw_view1 = {
             })
             .attr("stroke-width", 2)
     },
-    get_view3_data: function(id, flag) {
+    get_view3_7_data: function(id) {
         var sub_sub_leader = [
             ["1154", "1191", "1207", "1100", "1098", "1209", "1060"],
             ["1087", "1115", "1230", "1172", "1192", "1199", "1092", "1125", "1224"],
@@ -358,7 +350,6 @@ var draw_view1 = {
                 }
                 var sub_leader = ["1068", "1007", "1059"];
                 if (_.contains(sub_leader, id)) {
-                    console.log(sub_leader);
                     var tmp_group = sub_sub_leader[_.indexOf(sub_leader, id)];
                     var result = [id];
                     for (var i = 0; i < tmp_group.length; i++) {
@@ -371,13 +362,13 @@ var draw_view1 = {
                     }
 
                     draw_view3.get_view3_data(id, result, 0);
+                    draw_view7.get_view7_data(result, 0);
 
                 } else {
                     for (var index = 0; index < group.length; index++) {
                         if (_.contains(group[index], id)) {
-                            if (flag == 1)
-                                draw_view3.get_view3_data(id, group[index], 0);
-                            else draw_sub_view3.get_sub_view3_data(id, group[index]);
+                            draw_view3.get_view3_data(id, group[index], 0);
+                            draw_view7.get_view7_data(group[index], 0);
                             return;
                         }
                     }
