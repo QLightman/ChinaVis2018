@@ -6,16 +6,15 @@
 
 ## Usage
 - Load NewNewchinavis2018db file into MySQL
-- Activate chinaVis2018-0.0.1-SNAPSHOT.jar 
+- Activate [chinaVis2018-0.0.1-SNAPSHOT.jar]()
 ```
 java -jar chinaVis2018-0.0.1-SNAPSHOT.jar
 ```
-- Open index.html file with Chrome browser
+- Open [index.html](https://github.com/QLightman/ChinaVis2018/blob/master/index.html) file with Chrome browser
 
 ## Layout 
 
 
 <figure class="half">
     <img src="./figure/chinavis_demo.png" >
-    
 </figure>

@@ -34,7 +34,6 @@ var draw_view3 = {
         ids = ids + self.list[self.list.length - 1];
 
         var url = 'http://localhost:8080/getGroupOverview?ids=' + ids + '&date1=' + self.time[0] + '&date2=' + self.time[1];
-        console.log("url  " + url);
         $.ajax(url, {
             data: {},
             dataType: 'json',

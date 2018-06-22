@@ -32,8 +32,6 @@ var draw_view7 = {
         ids = ids + self.list[self.list.length - 1];
         var url = 'http://localhost:8080/getEmailSubjects?ids=' + ids + '&date1=' + self.time[0] + '&date2=' + self.time[1];;
 
-        console.log(url);
-
         $.ajax(url, {
             data: {},
             //dataType: 'json',
@@ -62,7 +60,6 @@ var draw_view7 = {
                 })
                 size_max = (size_max * 1.0 / self.ratio);
                 for (var i = 0; i < list_fre.length; i++) list_fre[i].size = Math.round(list_fre[i].size * 1.0 / size_max);
-                console.log(list_fre);
 
                 self.draw(list_fre);
 
